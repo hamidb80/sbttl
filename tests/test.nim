@@ -12,11 +12,11 @@ suite "srt":
 
 
 suite "vtt":
-  let 
+  let
     contentWithNumber = readFile "./samples/sub+number.vtt"
     contentWithout = readFile "./samples/sub-number.vtt"
 
-  var    caps: seq[Caption]
+  var caps: seq[Caption]
 
   test "parse + number":
     caps = parseVTT(contentWithNumber)

@@ -110,7 +110,9 @@ func parseVTT*(content: string): seq[Caption] =
 
     resolveContents()
 
-func genVTT*(captions: seq[Caption], meta = "" , includeCaptionNumber = false): string =
+func genVTT*(captions: seq[Caption],
+    meta = "", includeCaptionNumber = false): string =
+
     result = "WEBVTT\n" & meta & "\n"
 
     for i, c in captions:
