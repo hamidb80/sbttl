@@ -2,11 +2,13 @@ import std/[times, strscans, strutils, strformat]
 
 
 type
-    TimeRange = HSlice[Duration, Duration]
+    TimeRange* = HSlice[Duration, Duration]
 
     Caption* = object
         timeRange*: TimeRange
         content*: string
+
+# helper ------------------------------------
 
 func toDuration(t: seq[int]): Duration =
     assert t.len == 4
@@ -15,7 +17,15 @@ func toDuration(t: seq[int]): Duration =
 func toTimeRange(timeArr: array[8, int]): TimeRange =
     toDuration(timeArr[0..3]) .. toDuration(timeArr[4..7])
 
-func tryParseTimeRange(line: string): tuple[can: bool, res: TimeRange] =
+func isInt(s: string): bool =
+    for c in s:
+        if c notin '0' .. '9':
+            return false
+    true
+
+# SRT ----------------------------------------
+
+func tryParseُُSRTTimeRange(line: string): tuple[can: bool, res: TimeRange] =
     var n: array[8, int]
 
     result.can = line.scanf("$i:$i:$i,$i --> $i:$i:$i,$i",
@@ -24,13 +34,7 @@ func tryParseTimeRange(line: string): tuple[can: bool, res: TimeRange] =
     if result.can:
         result.res = toTimeRange n
 
-func isInt(s: string): bool =
-    for c in s:
-        if c notin '0' .. '9':
-            return false
-    true
-
-proc parseSRT*(content: string): seq[Caption] =
+func parseSRT*(content: string): seq[Caption] =
     var
         lastLineIsAnumber = false
         acc: seq[string]
@@ -39,9 +43,8 @@ proc parseSRT*(content: string): seq[Caption] =
         if result.len != 0:
             result[^1].content = acc.join "\n"
 
-
     for l in content.splitLines:
-        if lastLineIsAnumber and (let p = tryParseTimeRange(l); p.can):
+        if lastLineIsAnumber and (let p = tryParseُُSRTTimeRange(l); p.can):
             if result.len != 0:
                 discard acc.pop
 
@@ -68,3 +71,7 @@ func toSRT(c: Caption): string =
 func genSRT*(cs: seq[Caption]): string =
     for i, c in cs.pairs:
         result &= $(i+1) & "\n" & c.toSRT & "\n"
+
+# VTT ----------------------------------------
+
+# FIXME follow spec
