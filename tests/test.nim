@@ -30,3 +30,6 @@ suite "vtt":
 
   test "gen - number":
     check caps.genVTT().strip == contentWithout.strip
+
+  test "parse + number | gen - number":
+    check parseVTT(contentWithNumber).genVTT.strip == contentWithout.strip
