@@ -12,7 +12,7 @@ see `tests/test.nim` for now
 
 ### types
 ```nim
-TimeRange* = HSlice[Duration, Duration]
+TimeRange* = Slice[Duration]
 
 Caption* = object
     timeRange*: TimeRange
