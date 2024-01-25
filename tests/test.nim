@@ -2,13 +2,20 @@ import std/[unittest, strutils]
 import sbttl
 
 
+func lined(a: string): auto =
+  a.strip.splitLines
+
+template checkLineByLine(a, b): untyped =
+  check a.lined == b.lined
+
+
 suite "srt":
   let
     content = readFile "./samples/sub.srt"
     caps = parseSRT(content)
 
   test "e2e":
-    check content.strip == caps.genSRT.strip
+    checkLineByLine content, caps.genSRT
 
 
 suite "vtt":
@@ -22,14 +29,14 @@ suite "vtt":
     caps = parseVTT(contentWithNumber)
 
   test "gen + number":
-    check caps.genVTT("", true).strip == contentWithNumber.strip
+    checkLineByLine caps.genVTT("", true), contentWithNumber
 
 
   test "parse - number":
     caps = parseVTT(contentWithout)
 
   test "gen - number":
-    check caps.genVTT().strip == contentWithout.strip
+    checkLineByLine caps.genVTT(), contentWithout
 
   test "parse + number | gen - number":
-    check parseVTT(contentWithNumber).genVTT.strip == contentWithout.strip
+    checkLineByLine parseVTT(contentWithNumber).genVTT, contentWithout
